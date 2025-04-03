@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch } from "./Switch";
 import { Link, useNavigate } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { Thermometer, Wifi, Tv, Fan, CloudSun, Camera, Music, Speaker, Eye, EyeOff } from "lucide-react";
+import { Thermometer, Wifi, Tv, Fan, CloudSun, Camera, Music, Speaker } from "lucide-react";
 
 const devices = [
   { id: 1, name: "Nest Wifi", icon: <Wifi />, status: true },
   { id: 2, name: "Benq TV", icon: <Tv />, status: false },
   { id: 3, name: "Thermostat", icon: <Thermometer />, status: true },
   { id: 4, name: "Speaker", icon: <Speaker />, status: false },
-  { id: 5, name: "music", icon: <Music />, status: false},
-  { id: 6, name: "fan", icon: <Fan />, status: false},
+  { id: 5, name: "Music", icon: <Music />, status: false },
+  { id: 6, name: "Fan", icon: <Fan />, status: false },
 ];
 
 const energyData = [
@@ -25,7 +25,19 @@ const energyData = [
 
 export function SmartHomeDashboard() {
   const [deviceStatus, setDeviceStatus] = useState(devices);
-  const [fanOn, setFanOn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  const navigate = useNavigate();
+
+  // Fetch username from localStorage on component mount
+  useEffect(() => {
+    const storedName = localStorage.getItem("fullName");
+    if (storedName) {
+      setUserName(storedName);
+    } else {
+      navigate("/"); // Redirect to login if not logged in
+    }
+  }, [navigate]);
 
   const toggleDevice = (id) => {
     setDeviceStatus((prev) =>
@@ -37,8 +49,9 @@ export function SmartHomeDashboard() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">Good Morning, Lemonaru</h1>
-      <Link to="/" className="text-red-500 mb-4">Logout</Link>
+      <h1 className="text-3xl font-bold mb-6">Good Morning, {userName || "Guest"}!</h1>
+      <Link to="/" className="text-red-500 mb-4" onClick={() => localStorage.clear()}>Logout</Link>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
         {/* Weather Widget */}
         <div className="p-6 bg-white shadow-lg rounded-lg flex flex-col items-center">
@@ -61,7 +74,6 @@ export function SmartHomeDashboard() {
           <p className="text-sm text-red-500">Live</p>
         </div>
       </div>
-
 
       {/* Devices Section */}
       <h2 className="text-2xl font-bold mt-8 mb-4">My Devices</h2>
