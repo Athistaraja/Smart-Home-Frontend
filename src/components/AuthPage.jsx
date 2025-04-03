@@ -19,9 +19,9 @@ export function AuthPage() {
       const endpoint = isRegister ? "/register" : "/login";
       const data = isRegister ? { fullName, email, password } : { email, password };
 
-      console.log("Sending request to:", `http://localhost:4400${endpoint}`);
+      console.log("Sending request to:", `https://smart-home-backend-ubmj.onrender.com${endpoint}`);
 
-      const response = await axios.post(`http://localhost:4400${endpoint}`, data, {
+      const response = await axios.post(`https://smart-home-backend-ubmj.onrender.com${endpoint}`, data, {
         headers: { "Content-Type": "application/json" },
       });
 
