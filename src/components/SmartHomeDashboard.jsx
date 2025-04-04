@@ -1,8 +1,24 @@
 import { useState, useEffect } from "react";
 import { Switch } from "./Switch";
-import { Link, useNavigate } from "react-router-dom";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { Thermometer, Wifi, Tv, Fan, CloudSun, Camera, Music, Speaker } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  Thermometer,
+  Wifi,
+  Tv,
+  Fan,
+  CloudSun,
+  Camera,
+  Music,
+  Speaker,
+} from "lucide-react";
 
 const devices = [
   { id: 1, name: "Nest Wifi", icon: <Wifi />, status: true },
@@ -26,16 +42,14 @@ const energyData = [
 export function SmartHomeDashboard() {
   const [deviceStatus, setDeviceStatus] = useState(devices);
   const [userName, setUserName] = useState("");
-
   const navigate = useNavigate();
 
-  // Fetch username from localStorage on component mount
   useEffect(() => {
     const storedName = localStorage.getItem("fullName");
     if (storedName) {
       setUserName(storedName);
     } else {
-      navigate("/"); // Redirect to login if not logged in
+      navigate("/"); // Redirect if not logged in
     }
   }, [navigate]);
 
@@ -47,10 +61,36 @@ export function SmartHomeDashboard() {
     );
   };
 
+  const handleLogout = async () => {
+    const email = localStorage.getItem("email");
+
+    try {
+      if (email) {
+        await fetch("https://smart-home-backend-ubmj.onrender.com/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      }
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+
+    localStorage.clear();
+    navigate("/");
+  };
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">Good Morning, {userName || "Guest"}!</h1>
-      <Link to="/" className="text-red-500 mb-4" onClick={() => localStorage.clear()}>Logout</Link>
+      <h1 className="text-3xl font-bold mb-6">
+        Good Morning, {userName || "Guest"}!
+      </h1>
+      <button
+        onClick={handleLogout}
+        className="text-red-500 mb-4 hover:underline"
+      >
+        Logout
+      </button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
         {/* Weather Widget */}
@@ -79,7 +119,10 @@ export function SmartHomeDashboard() {
       <h2 className="text-2xl font-bold mt-8 mb-4">My Devices</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl">
         {deviceStatus.map((device) => (
-          <div key={device.id} className="p-6 bg-white shadow-lg rounded-lg flex flex-col items-center">
+          <div
+            key={device.id}
+            className="p-6 bg-white shadow-lg rounded-lg flex flex-col items-center"
+          >
             <div className="text-4xl text-blue-500">{device.icon}</div>
             <p className="text-lg mt-2">{device.name}</p>
             <Switch
@@ -91,15 +134,23 @@ export function SmartHomeDashboard() {
         ))}
       </div>
 
-      {/* Energy Consumption Chart */}
+      {/* Energy Chart */}
       <h2 className="text-2xl font-bold mt-8 mb-4">Energy Usage</h2>
       <div className="bg-white shadow-lg p-6 rounded-lg w-full max-w-6xl">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={energyData}>
             <XAxis dataKey="day" stroke="#333" />
             <YAxis stroke="#333" />
-            <Tooltip contentStyle={{ backgroundColor: "#fff", color: "#333" }} />
-            <Line type="monotone" dataKey="usage" stroke="#4f46e5" strokeWidth={3} dot={{ fill: "#4f46e5" }} />
+            <Tooltip
+              contentStyle={{ backgroundColor: "#fff", color: "#333" }}
+            />
+            <Line
+              type="monotone"
+              dataKey="usage"
+              stroke="#4f46e5"
+              strokeWidth={3}
+              dot={{ fill: "#4f46e5" }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
