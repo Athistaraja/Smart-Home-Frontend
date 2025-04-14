@@ -1,11 +1,23 @@
 export function Switch({ checked, onCheckedChange }) {
-    return (
-      <label className="flex items-center cursor-pointer">
-        <input type="checkbox" checked={checked} onChange={onCheckedChange} className="hidden" />
-        <div className={`w-10 h-5 bg-gray-400 rounded-full p-1 transition ${checked ? "bg-blue-500" : ""}`}>
-          <div className={`h-4 w-4 bg-white rounded-full transform transition ${checked ? "translate-x-5" : ""}`} />
-        </div>
-      </label>
-    );
-  }
-  
+  return (
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onCheckedChange}
+        className="sr-only"
+      />
+      <div
+        className={`w-12 h-6 rounded-full transition-colors duration-300 ease-in-out ${
+          checked ? "bg-blue-600" : "bg-gray-400"
+        }`}
+      >
+        <div
+          className={`h-5 w-5 bg-white rounded-full shadow-md transform transition-all duration-300 ease-in-out ${
+            checked ? "translate-x-6" : "translate-x-1"
+          }`}
+        />
+      </div>
+    </label>
+  );
+}
